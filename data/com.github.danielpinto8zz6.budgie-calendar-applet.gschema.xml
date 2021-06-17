@@ -14,6 +14,27 @@
         Show the clock at the format you want
       </description>
     </key>
+    <key name="show-custom-header" type="b">
+      <default>false</default>
+      <summary>Calender Header</summary>
+      <description>
+        Enable or disable custom calendar header
+      </description>
+    </key>
+    <key name="custom-header-1" type="s">
+      <default l10n="messages">"%A"</default>
+      <summary>Calender Header</summary>
+      <description>
+        Show the calendar header at the format you want
+      </description>
+    </key>
+    <key name="custom-header-2" type="s">
+      <default l10n="messages">"%e %B %Y"</default>
+      <summary>Calender Header</summary>
+      <description>
+        Show the calendar header at the format you want
+      </description>
+    </key>
     <key name="calendar-show-week-numbers" type="b">
       <default>false</default>
       <summary>Show week numbers in calendar</summary>

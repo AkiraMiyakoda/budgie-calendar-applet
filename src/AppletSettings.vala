@@ -20,6 +20,9 @@ namespace CalendarApplet {
         private Gtk.Switch switch_week_numbers;
         private Gtk.Switch switch_custom_format;
         private Gtk.Entry  custom_format;
+        private Gtk.Switch switch_custom_header;
+        private Gtk.Entry  custom_header_1;
+        private Gtk.Entry  custom_header_2;
 
         public AppletSettings () {
             Object (margin: 6,
@@ -69,35 +72,57 @@ namespace CalendarApplet {
             custom_format = new Gtk.Entry ();
             custom_format.set_halign (Gtk.Align.FILL);
 
+            var label_switch_custom_header = new Gtk.Label (_ ("Custom header"));
+            label_switch_custom_header.set_halign (Gtk.Align.START);
+            label_switch_custom_header.set_hexpand (true);
+            switch_custom_header = new Gtk.Switch ();
+            switch_custom_header.set_halign (Gtk.Align.END);
+
+            custom_header_1 = new Gtk.Entry ();
+            custom_header_1.set_halign (Gtk.Align.FILL);
+
+            custom_header_2 = new Gtk.Entry ();
+            custom_header_2.set_halign (Gtk.Align.FILL);
+
             string label_link = (_ ("Date format syntax"));
             Gtk.LinkButton linkbutton = new Gtk.LinkButton.with_label ("http://www.foragoodstrftime.com", label_link);
 
             var time_and_date_settings = new Gtk.Button.with_label (_ ("Time and date settings"));
             time_and_date_settings.clicked.connect (open_datetime_settings);
 
-            attach (about,                      0, 0, 2, 1);
-            attach (label_date,                 0, 2, 1, 1);
-            attach (switch_date,                1, 2, 1, 1);
-            attach (label_seconds,              0, 3, 1, 1);
-            attach (switch_seconds,             1, 3, 1, 1);
-            attach (label_format,               0, 4, 1, 1);
-            attach (switch_format,              1, 4, 1, 1);
-            attach (label_week_numbers,         0, 5, 1, 1);
-            attach (switch_week_numbers,        1, 5, 1, 1);
-            attach (label_switch_custom_format, 0, 6, 1, 1);
-            attach (switch_custom_format,       1, 6, 1, 1);
-            attach (custom_format,              0, 7, 2, 1);
-            attach (linkbutton,                 0, 8, 2, 1);
-            attach (time_and_date_settings,     0, 9, 2, 1);
+            attach (about,                      0,  0, 2, 1);
+            attach (label_date,                 0,  2, 1, 1);
+            attach (switch_date,                1,  2, 1, 1);
+            attach (label_seconds,              0,  3, 1, 1);
+            attach (switch_seconds,             1,  3, 1, 1);
+            attach (label_format,               0,  4, 1, 1);
+            attach (switch_format,              1,  4, 1, 1);
+            attach (label_week_numbers,         0,  5, 1, 1);
+            attach (switch_week_numbers,        1,  5, 1, 1);
+            attach (label_switch_custom_format, 0,  6, 1, 1);
+            attach (switch_custom_format,       1,  6, 1, 1);
+            attach (custom_format,              0,  7, 2, 1);
+            attach (label_switch_custom_header, 0,  8, 1, 1);
+            attach (switch_custom_header,       1,  8, 1, 1);
+            attach (custom_header_1,            0,  9, 2, 1);
+            attach (custom_header_2,            0, 10, 2, 1);
+            attach (linkbutton,                 0, 11, 2, 1);
+            attach (time_and_date_settings,     0, 12, 2, 1);
 
             settings.bind ("clock-show-date",    switch_date,    "active", SettingsBindFlags.DEFAULT);
             settings.bind ("clock-show-seconds", switch_seconds, "active", SettingsBindFlags.DEFAULT);
             applet_settings.bind ("show-custom-format",         switch_custom_format, "active", SettingsBindFlags.DEFAULT);
-            applet_settings.bind ("custom-format",              custom_format,          "text", SettingsBindFlags.DEFAULT);
+            applet_settings.bind ("custom-format",              custom_format,        "text",   SettingsBindFlags.DEFAULT);
+            applet_settings.bind ("show-custom-header",         switch_custom_header, "active", SettingsBindFlags.DEFAULT);
+            applet_settings.bind ("custom-header-1",            custom_header_1,      "text",   SettingsBindFlags.DEFAULT);
+            applet_settings.bind ("custom-header-2",            custom_header_2,      "text",   SettingsBindFlags.DEFAULT);
             applet_settings.bind ("calendar-show-week-numbers", switch_week_numbers,  "active", SettingsBindFlags.DEFAULT);
 
             apply_switch_custom_format();
             switch_custom_format.notify["active"].connect (apply_switch_custom_format);
+
+            apply_switch_custom_header();
+            switch_custom_header.notify["active"].connect (apply_switch_custom_header);
 
             on_settings_changed ("clock-format");
             switch_format.notify["active"].connect (() => {
@@ -116,6 +141,12 @@ namespace CalendarApplet {
             switch_date.set_sensitive (!active);
             switch_seconds.set_sensitive (!active);
             switch_format.set_sensitive (!active);
+        }
+
+        private void apply_switch_custom_header () {
+            var active = switch_custom_header.active;
+            custom_header_1.set_sensitive (active);
+            custom_header_2.set_sensitive (active);
         }
 
         private void on_settings_changed (string key) {

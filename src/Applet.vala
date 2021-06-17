@@ -32,11 +32,15 @@ namespace CalendarApplet {
         protected Gtk.Label seconds_label;
 
         protected bool ampm = false;
-        protected bool show_custom_format = false;
         protected bool show_seconds = false;
         protected bool show_date = false;
 
+        protected bool show_custom_format = false;
         protected string ? custom_format = null;
+
+        protected bool show_custom_header = false;
+        protected string ? custom_header_1 = null;
+        protected string ? custom_header_2 = null;
 
         private DateTime time;
 
@@ -49,8 +53,8 @@ namespace CalendarApplet {
 
         private unowned Budgie.PopoverManager ? manager = null;
 
-        private Gtk.Label day_of_week_header;
-        private Gtk.Label date_header;
+        private Gtk.Label header_1;
+        private Gtk.Label header_2;
 
         private Gtk.Calendar calendar;
 
@@ -105,17 +109,17 @@ namespace CalendarApplet {
             // Create a submenu system
             popover = new Budgie.Popover (widget);
 
-            day_of_week_header = new Gtk.Label ("");
-            day_of_week_header.get_style_context ().add_class ("h1");
-            day_of_week_header.set_halign (Gtk.Align.START);
-            day_of_week_header.margin_bottom = 6;
-            day_of_week_header.margin_start = 6;
+            header_1 = new Gtk.Label ("");
+            header_1.get_style_context ().add_class ("h1");
+            header_1.set_halign (Gtk.Align.START);
+            header_1.margin_bottom = 6;
+            header_1.margin_start = 6;
 
-            date_header = new Gtk.Label ("");
-            date_header.get_style_context ().add_class ("h2");
-            date_header.set_halign (Gtk.Align.START);
-            date_header.margin_start = 6;
-            date_header.margin_bottom = 12;
+            header_2 = new Gtk.Label ("");
+            header_2.get_style_context ().add_class ("h2");
+            header_2.set_halign (Gtk.Align.START);
+            header_2.margin_start = 6;
+            header_2.margin_bottom = 12;
 
             calendar = new Gtk.Calendar ();
 
@@ -124,8 +128,8 @@ namespace CalendarApplet {
             main_grid.margin = 6;
             main_grid.get_style_context ().add_class ("budgie-calendar-applet");
 
-            main_grid.add (day_of_week_header);
-            main_grid.add (date_header);
+            main_grid.add (header_1);
+            main_grid.add (header_2);
             main_grid.add (calendar);
 
             popover.add (main_grid);
@@ -163,6 +167,9 @@ namespace CalendarApplet {
             on_settings_change ("clock-show-date");
             on_settings_change ("show-custom-format");
             on_settings_change ("custom-format");
+            on_settings_change ("show-custom-header");
+            on_settings_change ("custom-header-1");
+            on_settings_change ("custom-header-2");
             on_settings_change ("calendar-show-week-numbers");
 
             popover.get_child ().show_all ();
@@ -199,8 +206,20 @@ namespace CalendarApplet {
                 this.update_clock ();
                 break;
             case "custom-format" :
-                custom_format = applet_settings.get_string ("custom-format");
+                custom_format = applet_settings.get_string (key);
                 this.update_clock ();
+                break;
+            case "show-custom-header" :
+                show_custom_header = applet_settings.get_boolean (key);
+                this.update_headers ();
+                break;
+            case "custom-header-1" :
+                custom_header_1 = applet_settings.get_string (key);
+                this.update_headers ();
+                break;
+            case "custom-header-2" :
+                custom_header_2 = applet_settings.get_string (key);
+                this.update_headers ();
                 break;
             case "calendar-show-week-numbers" :
                 calendar.show_week_numbers = applet_settings.get_boolean ("calendar-show-week-numbers");
@@ -310,12 +329,35 @@ namespace CalendarApplet {
 
         public void update_headers () {
             var time = new DateTime.now_local ();
-            string day_of_week = time.format ("%A");
-            day_of_week = day_of_week.substring (0,1).up () + day_of_week.substring (1);
-            day_of_week_header.set_label (day_of_week);
 
-            string date = time.format ("%e %B %Y");
-            date_header.set_label (date);
+            string label1 = "";
+            string label2 = "";
+
+            if (show_custom_header) {
+                label1 = time.format (custom_header_1);
+                label2 = time.format (custom_header_2);
+            }
+            else {
+                label1 = time.format ("%A");
+                label1 = label1.substring (0, 1).up () + label1.substring (1);
+                label2 = time.format ("%e %B %Y");
+            }
+
+            if (label1 != "") {
+                header_1.set_label (label1);
+                header_1.show ();
+            }
+            else {
+                header_1.hide ();
+            }
+
+            if (label2 != "") {
+                header_2.set_label (label2);
+                header_2.show ();
+            }
+            else {
+                header_2.hide ();
+            }
         }
 
         public override bool supports_settings () {
