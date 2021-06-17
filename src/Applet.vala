@@ -41,6 +41,7 @@ namespace CalendarApplet {
         protected bool show_custom_header = false;
         protected string ? custom_header_1 = null;
         protected string ? custom_header_2 = null;
+        protected int header_alignment = 0;
 
         private DateTime time;
 
@@ -170,6 +171,7 @@ namespace CalendarApplet {
             on_settings_change ("show-custom-header");
             on_settings_change ("custom-header-1");
             on_settings_change ("custom-header-2");
+            on_settings_change ("header-alignment");
             on_settings_change ("calendar-show-week-numbers");
 
             popover.get_child ().show_all ();
@@ -219,6 +221,10 @@ namespace CalendarApplet {
                 break;
             case "custom-header-2" :
                 custom_header_2 = applet_settings.get_string (key);
+                this.update_headers ();
+                break;
+            case "header-alignment" :
+                header_alignment = applet_settings.get_int (key);
                 this.update_headers ();
                 break;
             case "calendar-show-week-numbers" :
@@ -358,6 +364,22 @@ namespace CalendarApplet {
             else {
                 header_2.hide ();
             }
+
+            Gtk.Align align;
+            switch (header_alignment) {
+            case 1:
+                align = Gtk.Align.FILL;
+                break;
+            case 2:
+                align = Gtk.Align.END;
+                break;
+            default:
+                align = Gtk.Align.START;
+                break;
+            }
+
+            header_1.set_halign(align);
+            header_2.set_halign(align);
         }
 
         public override bool supports_settings () {

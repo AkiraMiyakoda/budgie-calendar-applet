@@ -23,6 +23,7 @@ namespace CalendarApplet {
         private Gtk.Switch switch_custom_header;
         private Gtk.Entry  custom_header_1;
         private Gtk.Entry  custom_header_2;
+        private Gtk.ComboBoxText header_alignment;
 
         public AppletSettings () {
             Object (margin: 6,
@@ -84,6 +85,14 @@ namespace CalendarApplet {
             custom_header_2 = new Gtk.Entry ();
             custom_header_2.set_halign (Gtk.Align.FILL);
 
+            var label_header_alignment = new Gtk.Label (_ ("Header alignment"));
+            label_header_alignment.set_halign (Gtk.Align.START);
+            label_header_alignment.set_hexpand (true);
+            header_alignment = new Gtk.ComboBoxText();
+            header_alignment.append_text(_ ("Left"));
+            header_alignment.append_text(_ ("Center"));
+            header_alignment.append_text(_ ("Right"));
+
             string label_link = (_ ("Date format syntax"));
             Gtk.LinkButton linkbutton = new Gtk.LinkButton.with_label ("http://www.foragoodstrftime.com", label_link);
 
@@ -106,8 +115,10 @@ namespace CalendarApplet {
             attach (switch_custom_header,       1,  8, 1, 1);
             attach (custom_header_1,            0,  9, 2, 1);
             attach (custom_header_2,            0, 10, 2, 1);
-            attach (linkbutton,                 0, 11, 2, 1);
-            attach (time_and_date_settings,     0, 12, 2, 1);
+            attach (label_header_alignment,     0, 11, 1, 1);
+            attach (header_alignment,           1, 11, 1, 1);
+            attach (linkbutton,                 0, 12, 2, 1);
+            attach (time_and_date_settings,     0, 13, 2, 1);
 
             settings.bind ("clock-show-date",    switch_date,    "active", SettingsBindFlags.DEFAULT);
             settings.bind ("clock-show-seconds", switch_seconds, "active", SettingsBindFlags.DEFAULT);
@@ -116,6 +127,7 @@ namespace CalendarApplet {
             applet_settings.bind ("show-custom-header",         switch_custom_header, "active", SettingsBindFlags.DEFAULT);
             applet_settings.bind ("custom-header-1",            custom_header_1,      "text",   SettingsBindFlags.DEFAULT);
             applet_settings.bind ("custom-header-2",            custom_header_2,      "text",   SettingsBindFlags.DEFAULT);
+            applet_settings.bind ("header-alignment",           header_alignment,     "active", SettingsBindFlags.DEFAULT);
             applet_settings.bind ("calendar-show-week-numbers", switch_week_numbers,  "active", SettingsBindFlags.DEFAULT);
 
             apply_switch_custom_format();

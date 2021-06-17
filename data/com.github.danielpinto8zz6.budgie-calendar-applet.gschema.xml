@@ -35,6 +35,13 @@
         Show the calendar header at the format you want
       </description>
     </key>
+    <key name="header-alignment" type="i">
+      <default l10n="messages">0</default>
+      <summary>Calender Header</summary>
+      <description>
+        Show the calendar header with the alignment you want
+      </description>
+    </key>
     <key name="calendar-show-week-numbers" type="b">
       <default>false</default>
       <summary>Show week numbers in calendar</summary>
